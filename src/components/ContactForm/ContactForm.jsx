@@ -1,7 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { nanoid } from 'nanoid';
 import css from './ContactForm.module.css';
+
 
 const UserSchema = Yup.object().shape({
   name: Yup.string()
@@ -20,11 +20,7 @@ const UserSchema = Yup.object().shape({
 
 export default function ContactForm({ onAdd }) {
   const handleSubmit = (values, actions) => {
-    const newContact = {
-      ...values,
-      id: nanoid(),
-    };
-    onAdd(newContact);
+    onAdd(values);
     actions.resetForm();
   };
 
