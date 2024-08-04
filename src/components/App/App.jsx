@@ -1,31 +1,35 @@
+// Импорт необходимых библиотек и компонентов
 import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
 import ContactForm from '../ContactForm/ContactForm';
 import SearchBox from '../SearchBox/SearchBox';
 import ContactList from '../ContactList/ContactList';
-import {addContact,deleteContact,selectContacts,} from '../../redux/contactsSlice';
+import { fetchContacts, addContact, deleteContact } from '../../redux/contactsOps'; // Импорт асинхронных операций из contactsOps.js
+import { selectFilteredContacts } from '../../redux/contactsSlice'; // Использование только selectFilteredContacts
 import { changeFilter, selectNameFilter } from '../../redux/filtersSlice';
-
 
 export default function App() {
   const dispatch = useDispatch();
-  const contacts = useSelector(selectContacts);
   const filter = useSelector(selectNameFilter);
 
-  const handleAddContact = (newContact) => {
-    dispatch(addContact(newContact));
+  // Загрузка контактов при монтировании компонента
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
+  const handleAddContact = newContact => {
+    dispatch(addContact(newContact)); // Добавление нового контакта
   };
 
-  const handleDeleteContact = (contactId) => {
-    dispatch(deleteContact(contactId));
+  const handleDeleteContact = contactId => {
+    dispatch(deleteContact(contactId)); // Удаление контакта
   };
 
-  const handleFilterChange = (filter) => {
-    dispatch(changeFilter(filter));
+  const handleFilterChange = filter => {
+    dispatch(changeFilter(filter)); // Изменение фильтра
   };
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const filteredContacts = useSelector(selectFilteredContacts); // Получение фильтрованных контактов
 
   return (
     <div>

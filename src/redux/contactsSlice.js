@@ -1,59 +1,19 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+// Импорт необходимых библиотек и асинхронных операций
+import { createSlice } from '@reduxjs/toolkit';
+import { fetchContacts, addContact, deleteContact } from './contactsOps'; // Импорт асинхронных операций из contactsOps.js
 import { createSelector } from 'reselect';
 
-// Импорт начальных данных (если необходимо)
-// import initialContacts from '../data/initialContacts';
-
-// URL вашего эндпоинта на mockapi.io
-const API_URL = 'https://66a8010353c13f22a3d1a8f9.mockapi.io/contacts';
-
 const initialState = {
-  items: [], // Используем пустой массив, чтобы данные подгружались с сервера
+  items: [],
   loading: false,
   error: null,
 };
-
-export const fetchContacts = createAsyncThunk(
-  'contacts/fetchAll',
-  async (_, thunkAPI) => {
-    try {
-      const response = await axios.get(API_URL);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
-
-export const addContact = createAsyncThunk(
-  'contacts/addContact',
-  async (contact, thunkAPI) => {
-    try {
-      const response = await axios.post(API_URL, contact);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
-
-export const deleteContact = createAsyncThunk(
-  'contacts/deleteContact',
-  async (id, thunkAPI) => {
-    try {
-      await axios.delete(`${API_URL}/${id}`);
-      return id;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
-  }
-);
 
 const contactsSlice = createSlice({
   name: 'contacts',
   initialState,
   extraReducers: builder => {
+    // Добавлены обработчики для асинхронных операций
     builder
       .addCase(fetchContacts.pending, state => {
         state.loading = true;
@@ -96,6 +56,7 @@ const contactsSlice = createSlice({
   },
 });
 
+// Селекторы для получения контактов и фильтрованных контактов
 export const selectContacts = state => state.contacts.items;
 
 export const selectFilteredContacts = createSelector(
